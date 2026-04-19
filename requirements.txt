@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+line-bot-sdk
+easyocr
+python-dotenv
+google-genai
+apscheduler
+sqlalchemy
+opencv-python-headless
+Pillow
+pytz

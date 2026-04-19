@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+*.pyc
+.env
+*.db
+server_logs.txt
+cloudflared.log
+.DS_Store
