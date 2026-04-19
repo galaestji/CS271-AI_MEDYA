@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Paracetamol",
+    "aliases": ["พารา", "paracetamol", "para", "acetaminophen", "tylenol", "sara", "panadol", "bakamol", "cemol"],
+    "usage": "แก้ปวด ลดไข้",
+    "warning": "ไม่ควรเกิน 8 เม็ดต่อวัน ห้ามกินกับแอลกอฮอล์ ระวังความเป็นพิษต่อตับ"
+  },
+  {
+    "name": "Omeprazole",
+    "aliases": ["omeprazole", "โอเมพ", "losec", "miracid", "belcid", "ยาลดกรดเม็ดม่วง"],
+    "usage": "ลดกรดในกระเพาะ แก้แสบร้อนกลางอก รักษาโรคกระเพาะและกรดไหลย้อน",
+    "warning": "กินก่อนอาหาร 30 นาที ไม่ควรใช้ติดต่อกันเกิน 14 วันโดยไม่ปรึกษาแพทย์"
+  },
+  {
+    "name": "Amoxicillin",
+    "aliases": ["amoxicillin", "อะม็อกซี", "แอมม็อก", "amoxil", "ibiamox", "moxilin", "curam"],
+    "usage": "ยาปฏิชีวนะ แก้การติดเชื้อแบคทีเรีย",
+    "warning": "กินให้ครบตามแพทย์สั่ง ห้ามหยุดยาเอง แจ้งแพทย์ถ้าแพ้ยา"
+  },
+  {
+    "name": "Chlorpheniramine",
+    "aliases": ["chlorpheniramine", "cpm", "piriton", "histatab", "ยาแก้แพ้เม็ดเหลือง"],
+    "usage": "ลดน้ำมูก แก้แพ้ แก้คัน",
+    "warning": "ทำให้ง่วงนอนมาก หลีกเลี่ยงการขับขี่ยานพาหนะ"
+  },
+  {
+    "name": "Ibuprofen",
+    "aliases": ["ibuprofen", "ไอบู", "brufen", "gofen", "advil", "nurofen", "amofen"],
+    "usage": "แก้ปวด ลดไข้ ลดอักเสบ ปวดประจำเดือน",
+    "warning": "กินหลังอาหารทันที ห้ามใช้ถ้าท้องว่างหรือเป็นโรคกระเพาะ"
+  },
+  {
+    "name": "Aspirin",
+    "aliases": ["aspirin", "asa", "aspent", "bayer aspirin"],
+    "usage": "ป้องกันการแข็งตัวของเลือด ลดปวดอักเสบ",
+    "warning": "ห้ามใช้ในเด็กที่มีอาการไข้จากไวรัส ระวังภาวะเลือดออกง่าย"
+  },
+  {
+    "name": "Diclofenac",
+    "aliases": ["diclofenac", "voltaren", "amethone", "difelene", "ยาแก้ปวดเส้น"],
+    "usage": "ลดปวด บวม อักเสบของข้อและกล้ามเนื้ออย่างแรง",
+    "warning": "ต้องกินหลังอาหารทันที ระวังในผู้ป่วยโรคหัวใจ"
+  },
+  {
+    "name": "Celecoxib",
+    "aliases": ["celecoxib", "celebrex", "celecox", "zycel"],
+    "usage": "ลดปวดต้านการอักเสบ ระคายเคืองกระเพาะน้อย",
+    "warning": "ห้ามใช้ในผู้ที่แพ้ยากลุ่ม Sulfa ระวังในผู้ป่วยโรคหัวใจ"
+  },
+  {
+    "name": "Naproxen",
+    "aliases": ["naproxen", "synflex", "naprosyn", "flemex n"],
+    "usage": "แก้ปวดข้อ ปวดประจำเดือน ปวดไมเกรน",
+    "warning": "มีฤทธิ์กัดกระเพาะอาหาร ต้องกินพร้อมหรือหลังอาหารทันที"
+  },
+  {
+    "name": "Loratadine",
+    "aliases": ["loratadine", "ลอราทา", "claritin", "clarityne", "roletra", "lorid"],
+    "usage": "แก้แพ้ ลดน้ำมูก ลดอาการคัน (ไม่ค่อยง่วง)",
+    "warning": "อาจทำให้ง่วงนอนได้ในบางราย"
+  },
+  {
+    "name": "Cetirizine",
+    "aliases": ["cetirizine", "zyrtec", "fatec", "cetrizin", "zermine"],
+    "usage": "แก้แพ้ ลดน้ำมูก คันคอ (ไม่ค่อยง่วง)",
+    "warning": "อาจทำให้ปากแห้ง คอแห้ง หรือง่วงซึมได้ในบางคน"
+  },
+  {
+    "name": "Fexofenadine",
+    "aliases": ["fexofenadine", "telfast", "fexo", "fexofen"],
+    "usage": "แก้แพ้ แก้ภูมิแพ้อากาศ (ไม่ค่อยง่วง)",
+    "warning": "ไม่ควรทานร่วมกับน้ำผลไม้เพราะจะลดการดูดซึมยา"
+  },
+  {
+    "name": "Dextromethorphan",
+    "aliases": ["dextromethorphan", "terco-d", "ยาแก้ไอเม็ดกลมสีเหลือง"],
+    "usage": "ระงับอาการไอแบบไม่มีเสมหะ (ไอแห้ง)",
+    "warning": "ห้ามใช้ในผู้ที่มีเสมหะเหนียวข้นเพราะจะทำให้เสมหะคั่งค้าง"
+  },
+  {
+    "name": "Bromhexine",
+    "aliases": ["bromhexine", "bisolvon", "flemex"],
+    "usage": "ละลายเสมหะ ช่วยให้เสมหะใสและขับออกง่าย",
+    "warning": "ระวังการใช้ในผู้ป่วยที่มีประวัติเป็นแผลในกระเพาะอาหาร"
+  },
+  {
+    "name": "Ketoconazole",
+    "aliases": ["ketoconazole", "nizoral", "fungazol"],
+    "usage": "รักษาโรคเชื้อรา รังแค กลากเกลื้อน",
+    "warning": "ยาเม็ดระวังความเป็นพิษต่อตับ ปัจจุบันนิยมใช้ภายนอก"
+  },
+  {
+    "name": "Betamethasone",
+    "aliases": ["betamethasone", "betnovate", "celestoderm", "dermovate", "diproson"],
+    "usage": "ลดการอักเสบผิวหนัง ผื่นแพ้ (สเตียรอยด์)",
+    "warning": "ห้ามทาแผลติดเชื้อ และไม่ควรทาติดต่อกันนานเกินไป"
+  },
+  {
+    "name": "Bisacodyl",
+    "aliases": ["bisacodyl", "dulcolax", "ยาถ่ายเม็ดเหลือง"],
+    "usage": "รักษาอาการท้องผูก กระตุ้นลำไส้บีบตัว",
+    "warning": "ห้ามเคี้ยวเม็ดยา และไม่ควรใช้ติดต่อกันนานเกินไป"
+  },
+  {
+    "name": "Calamine lotion",
+    "aliases": ["calamine lotion", "คาลาไมน์ศิริราช", "ยาทาแก้คันสีชมพู"],
+    "usage": "บรรเทาอาการคันตามผิวหนัง ผดผื่นคัน ลมพิษ",
+    "warning": "ใช้ทาภายนอกเท่านั้น ห้ามรับประทาน"
+  },
+  {
+    "name": "ORS",
+    "aliases": ["ors", "oral rehydration salts", "royal-d", "oreda", "ผงน้ำตาลเกลือแร่", "ผงแก้ท้องเสีย"],
+    "usage": "ชดเชยน้ำและเกลือแร่จากการท้องเสียหรืออาเจียน",
+    "warning": "ไม่ใช่ยาหยุดถ่าย ควรจิบเรื่อยๆ ไม่ควรดื่มรวดเดียวหมด"
+  },
+  {
+    "name": "Activated Carbon",
+    "aliases": ["activated carbon", "ultracarbon", "ca-r-bon", "ผงถ่าน"],
+    "usage": "ดูดซับสารพิษ หรือบรรเทาอาการท้องเสีย",
+    "warning": "ทำให้อุจจาระมีสีดำ ทานห่างจากยาอื่นอย่างน้อย 2 ชม."
+  },
+  {
+    "name": "Simethicone",
+    "aliases": ["simethicone", "air-x", "gas-x", "disflatyl"],
+    "usage": "ขับลม บรรเทาอาการท้องอืด ท้องเฟ้อ",
+    "warning": "ควรเคี้ยวเม็ดยาให้ละเอียดก่อนกลืน"
+  },
+  {
+    "name": "Domperidone",
+    "aliases": ["domperidone", "motilium", "deperid", "mirax"],
+    "usage": "แก้คลื่นไส้ อาเจียน ช่วยกระเพาะบีบตัว",
+    "warning": "ทานก่อนอาหาร 15-30 นาที ระวังการใช้ร่วมกับยาที่ส่งผลต่อหัวใจ"
+  }
+]
