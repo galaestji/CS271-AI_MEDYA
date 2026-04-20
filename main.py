@@ -1,19 +1,21 @@
 import os
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request, HTTPException, Form
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
-from database import SessionLocal, Medication
+from database import SessionLocal, Medication, UserProfile
 from ocr_engine import extract_text_from_image
 from llm_parser import parse_medication_text
 from scheduler import start_scheduler
 
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, ImageMessage, TextMessage, TextSendMessage, PostbackEvent, FlexSendMessage
+from linebot.models import MessageEvent, ImageMessage, TextMessage, TextSendMessage, PostbackEvent, FlexSendMessage, FollowEvent
 
 load_dotenv()
 
 app = FastAPI(title="Medication Reminder Bot")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize Line Bot
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
@@ -40,6 +42,296 @@ def create_simple_flex(text: str, title: str = "แจ้งเตือน", co
 @app.on_event("startup")
 def startup_event():
     start_scheduler()
+
+@app.get("/profile", response_class=HTMLResponse)
+async def get_profile_form(user_id: str = ""):
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>บันทึกประวัติทางการแพทย์</title>
+        <style>
+            body {{ font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; padding: 20px; }}
+            .container {{ background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; margin-top: 20px; }}
+            h2 {{ color: #4CB0A0; text-align: center; margin-bottom: 20px; font-weight: bold; }}
+            label {{ font-weight: bold; color: #555; display: block; margin-top: 15px; font-size: 14px; }}
+            input, select, textarea {{ width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background-color: #FAFAFA; }}
+            input:focus, textarea:focus, select:focus {{ border-color: #4CB0A0; outline: none; box-shadow: 0 0 5px rgba(76, 176, 160, 0.4); background-color: #FFF; }}
+            button {{ background-color: #4CB0A0; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 25px; cursor: pointer; transition: background 0.3s; box-shadow: 0 4px 6px rgba(76, 176, 160, 0.3); }}
+            button:hover {{ background-color: #3b8e81; transform: translateY(-1px); }}
+        </style>
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <h2>📝 ข้อมูลแพทย์ประจำตัว</h2>
+            <form action="/profile" method="post">
+                <input type="hidden" name="user_id" value="{user_id}">
+                
+                <label>ชื่อ-นามสกุล / ชื่อเล่น</label>
+                <input type="text" name="name" required placeholder="เช่น น้องขุนทอง">
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>อายุ (ปี)</label>
+                        <input type="number" name="age" required placeholder="เช่น 25">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>เพศ</label>
+                        <select name="gender">
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                            <option value="อื่นๆ">อื่นๆ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>น้ำหนัก (กก.)</label>
+                        <input type="number" step="0.1" name="weight" placeholder="0.0">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>ส่วนสูง (ซม.)</label>
+                        <input type="number" name="height" placeholder="0">
+                    </div>
+                </div>
+
+                <label>โรคประจำตัว (ถ้ามี)</label>
+                <input type="text" name="sickness" placeholder="เช่น ความดัน, เบาหวาน (ถ้าไม่มีเว้นว่าง)">
+
+                <label>ประวัติการแพ้ยา (ถ้ามี)</label>
+                <textarea name="allergies" rows="2" placeholder="เช่น แพ้เพนิซิลลิน, อาหารทะเล (ถ้าไม่มีเว้นว่าง)"></textarea>
+
+                <button type="submit">บันทึกข้อมูลส่วนตัว</button>
+            </form>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+@app.post("/profile", response_class=HTMLResponse)
+async def post_profile(
+    user_id: str = Form(...),
+    name: str = Form(""),
+    age: int = Form(None),
+    gender: str = Form(""),
+    weight: str = Form(""),
+    height: str = Form(""),
+    sickness: str = Form(""),
+    allergies: str = Form("")
+):
+    db = SessionLocal()
+    try:
+        profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        if not profile:
+            profile = UserProfile(user_id=user_id)
+            db.add(profile)
+        
+        profile.name = name
+        profile.age = age
+        profile.gender = gender
+        profile.weight = weight
+        profile.height = height
+        profile.sickness = sickness
+        profile.allergies = allergies
+        
+        db.commit()
+    finally:
+        db.close()
+        
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>บันทึกสำเร็จ</title>
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body { font-family: 'Sarabun', sans-serif; background-color: #4CB0A0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+            .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 80%; max-width: 350px; }
+            h2 { color: #4CB0A0; font-weight: bold; margin-bottom: 5px; }
+            p { font-size: 16px; color: #666; margin-bottom: 25px; }
+            .icon { font-size: 60px; margin-bottom: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="icon">✨</div>
+            <h2>บันทึกข้อมูลสำเร็จ!</h2>
+            <p>ประวัติทางการแพทย์ของคุณถูกเก็บรักษาอย่างปลอดภัย</p>
+            <p style="font-weight: bold; color: #333; margin-top: 20px;">กรุณากดปิดหน้านี้ แล้วกลับไปยังแชท LINE เพื่อใช้งานต่อได้เลยค่ะ 😄</p>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+# ─────────────── Add Medication HTML Form ───────────────
+CSS_SHARED = """
+    body { font-family: 'Sarabun', sans-serif; background: #f4f6f9; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; box-sizing: border-box; }
+    .container { background: white; padding: 28px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 420px; margin-top: 16px; }
+    h2 { color: #4CB0A0; text-align: center; margin-bottom: 18px; font-weight: bold; font-size: 1.3rem; }
+    label { font-weight: bold; color: #555; display: block; margin-top: 14px; font-size: 13px; }
+    input, select, textarea { width: 100%; padding: 11px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #FAFAFA; font-family: 'Sarabun', sans-serif; }
+    input:focus, textarea:focus, select:focus { border-color: #4CB0A0; outline: none; box-shadow: 0 0 5px rgba(76,176,160,0.4); background: #FFF; }
+    .btn-primary { background-color: #4CB0A0; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 17px; font-weight: bold; margin-top: 22px; cursor: pointer; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(76,176,160,0.3); display: block; text-align: center; }
+    .btn-primary:hover { background-color: #3b8e81; transform: translateY(-1px); }
+    .btn-danger { background-color: #E74C3C; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 17px; font-weight: bold; margin-top: 10px; cursor: pointer; transition: background 0.2s; }
+    .btn-danger:hover { background-color: #c0392b; }
+    .hint { font-size: 12px; color: #999; margin-top: 4px; }
+    .success-page { font-family: 'Sarabun', sans-serif; background: #4CB0A0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .success-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 80%; max-width: 350px; }
+    .success-box h2 { color: #4CB0A0; } .success-box .icon { font-size: 56px; margin-bottom: 12px; }
+"""
+GOOGLE_FONT = '<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'
+
+@app.get("/add-med", response_class=HTMLResponse)
+async def get_add_med_form(user_id: str = ""):
+    html = f"""
+    <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มยาใหม่ - MED-YA</title><style>{CSS_SHARED}</style>{GOOGLE_FONT}</head>
+    <body><div class="container">
+        <h2>💊 เพิ่มข้อมูลยาใหม่</h2>
+        <form action="/add-med" method="post">
+            <input type="hidden" name="user_id" value="{user_id}">
+            <label>ชื่อยา *</label>
+            <input type="text" name="med_name" required placeholder="เช่น Amoxicillin, ยาพาราเซตามอล">
+            <label>วิธีใช้ / ขนาดยา *</label>
+            <input type="text" name="dosage" required placeholder="เช่น กินหลังอาหาร 1 เม็ด">
+            <label>จำนวนเม็ดต่อครั้ง</label>
+            <input type="number" name="pills_per_dose" value="1" min="1" placeholder="1">
+            <label>จำนวนยาทั้งหมด (เม็ด)</label>
+            <input type="number" name="total_pills" placeholder="เช่น 30 (เว้นว่างถ้าไม่ทราบ)">
+            <label>เวลาแจ้งเตือน *</label>
+            <input type="text" name="time_to_take" required placeholder="เช่น 08:00, 12:00, 20:00">
+            <p class="hint">⏰ ใส่หลายเวลาได้โดยคั่นด้วยเครื่องหมาย , (comma)</p>
+            <button class="btn-primary" type="submit">💾 บันทึกยา</button>
+        </form>
+    </div></body></html>
+    """
+    return HTMLResponse(content=html)
+
+@app.post("/add-med", response_class=HTMLResponse)
+async def post_add_med(
+    user_id: str = Form(...),
+    med_name: str = Form(...),
+    dosage: str = Form(""),
+    pills_per_dose: int = Form(1),
+    total_pills: str = Form(""),
+    time_to_take: str = Form("")
+):
+    total = int(total_pills) if total_pills.strip().isdigit() else None
+    db = SessionLocal()
+    try:
+        new_med = Medication(
+            user_id=user_id, med_name=med_name, dosage=dosage,
+            time_to_take=time_to_take, total_pills=total,
+            pills_left=total, pills_per_dose=pills_per_dose
+        )
+        db.add(new_med)
+        db.commit()
+    finally:
+        db.close()
+    html = f"""
+    <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><style>{CSS_SHARED}</style>{GOOGLE_FONT}</head>
+    <body class="success-page"><div class="success-box">
+        <div class="icon">✅</div><h2>บันทึกยาสำเร็จ!</h2>
+        <p>ยา <strong>{med_name}</strong> ถูกเพิ่มเข้าระบบแล้วค่ะ</p>
+        <p style="color:#777; margin-top:16px;">ปิดหน้านี้แล้วกลับสู่แชท LINE ได้เลยค่ะ 😊</p>
+    </div></body></html>
+    """
+    return HTMLResponse(content=html)
+
+# ─────────────── Edit Medication HTML Form ───────────────
+@app.get("/edit-med", response_class=HTMLResponse)
+async def get_edit_med_form(med_id: int = 0, user_id: str = ""):
+    db = SessionLocal()
+    med = db.query(Medication).filter(Medication.id == med_id, Medication.user_id == user_id).first()
+    db.close()
+    if not med:
+        return HTMLResponse(content="<h3>ไม่พบข้อมูลยานี้</h3>", status_code=404)
+    html = f"""
+    <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขข้อมูลยา - MED-YA</title><style>{CSS_SHARED}</style>{GOOGLE_FONT}</head>
+    <body><div class="container">
+        <h2>✏️ แก้ไขข้อมูลยา</h2>
+        <form action="/edit-med" method="post">
+            <input type="hidden" name="med_id" value="{med.id}">
+            <input type="hidden" name="user_id" value="{user_id}">
+            <label>ชื่อยา *</label>
+            <input type="text" name="med_name" required value="{med.med_name}">
+            <label>วิธีใช้ / ขนาดยา</label>
+            <input type="text" name="dosage" value="{med.dosage or ''}">
+            <label>จำนวนเม็ดต่อครั้ง</label>
+            <input type="number" name="pills_per_dose" value="{med.pills_per_dose or 1}" min="1">
+            <label>จำนวนยาที่เหลือ (เม็ด)</label>
+            <input type="number" name="pills_left" value="{med.pills_left if med.pills_left is not None else ''}" placeholder="เว้นว่างถ้าไม่ทราบ">
+            <label>เวลาแจ้งเตือน</label>
+            <input type="text" name="time_to_take" value="{med.time_to_take or ''}" placeholder="เช่น 08:00, 20:00">
+            <p class="hint">⏰ คั่นหลายเวลาด้วยเครื่องหมาย , (comma)</p>
+            <button class="btn-primary" type="submit">💾 บันทึกการแก้ไข</button>
+        </form>
+    </div></body></html>
+    """
+    return HTMLResponse(content=html)
+
+@app.post("/edit-med", response_class=HTMLResponse)
+async def post_edit_med(
+    med_id: int = Form(...),
+    user_id: str = Form(...),
+    med_name: str = Form(...),
+    dosage: str = Form(""),
+    pills_per_dose: int = Form(1),
+    pills_left: str = Form(""),
+    time_to_take: str = Form("")
+):
+    db = SessionLocal()
+    try:
+        med = db.query(Medication).filter(Medication.id == med_id, Medication.user_id == user_id).first()
+        if med:
+            med.med_name = med_name
+            med.dosage = dosage
+            med.pills_per_dose = pills_per_dose
+            med.pills_left = int(pills_left) if pills_left.strip().isdigit() else None
+            med.time_to_take = time_to_take
+            db.commit()
+    finally:
+        db.close()
+    html = f"""
+    <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><style>{CSS_SHARED}</style>{GOOGLE_FONT}</head>
+    <body class="success-page"><div class="success-box">
+        <div class="icon">✏️</div><h2>แก้ไขข้อมูลสำเร็จ!</h2>
+        <p>อัปเดตข้อมูลยา <strong>{med_name}</strong> เรียบร้อยแล้วค่ะ</p>
+        <p style="color:#777; margin-top:16px;">ปิดหน้านี้แล้วกลับสู่แชท LINE ได้เลยค่ะ 😊</p>
+    </div></body></html>
+    """
+    return HTMLResponse(content=html)
+
+@app.get("/delete-med", response_class=HTMLResponse)
+async def delete_med(med_id: int = 0, user_id: str = ""):
+    db = SessionLocal()
+    try:
+        med = db.query(Medication).filter(Medication.id == med_id, Medication.user_id == user_id).first()
+        med_name = med.med_name if med else "ไม่พบ"
+        if med:
+            med.is_active = False  # soft delete
+            db.commit()
+    finally:
+        db.close()
+    html = f"""
+    <!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><style>{CSS_SHARED}</style>{GOOGLE_FONT}</head>
+    <body class="success-page"><div class="success-box">
+        <div class="icon">🗑️</div><h2>ลบยาสำเร็จ!</h2>
+        <p>ยา <strong>{med_name}</strong> ถูกลบออกจากระบบแล้วค่ะ</p>
+        <p style="color:#777; margin-top:16px;">ปิดหน้านี้แล้วกลับสู่แชท LINE ได้เลยค่ะ 😊</p>
+    </div></body></html>
+    """
+    return HTMLResponse(content=html)
 
 @app.post("/callback")
 async def callback(request: Request):
@@ -89,6 +381,75 @@ async def callback(request: Request):
                     print(e)
                 finally:
                     db.close()
+            continue
+            
+        if isinstance(event, FollowEvent):
+            user_id = event.source.user_id
+            try:
+                profile = line_bot_api.get_profile(user_id)
+                display_name = profile.display_name
+            except:
+                display_name = "ผู้ใช้งาน"
+
+            base_url = str(request.base_url).rstrip("/")
+            img_url = f"{base_url}/static/doctor.png"
+            
+            welcome_flex = FlexSendMessage(
+                alt_text="MED-YA คุณหมอมาแล้ว ยินดีต้อนรับครับ!",
+                contents={
+                    "type": "bubble",
+                    "body": {
+                        "type": "box", "layout": "vertical", "paddingAll": "0px",
+                        "contents": [
+                            {
+                                "type": "box", "layout": "horizontal", "paddingAll": "20px", "paddingBottom": "10px",
+                                "contents": [
+                                    {
+                                        "type": "box", "layout": "vertical", "flex": 2, "justifyContent": "center",
+                                        "contents": [
+                                            {"type": "text", "text": "สวัสดีครับ", "weight": "bold", "size": "xl", "color": "#333333"},
+                                            {"type": "text", "text": "MED-YA คุณหมอมาแล้ว", "weight": "bold", "size": "sm", "color": "#4CB0A0", "margin": "sm"}
+                                        ]
+                                    },
+                                    {
+                                        "type": "box", "layout": "vertical", "flex": 1, "alignItems": "flex-end",
+                                        "contents": [
+                                            {"type": "image", "url": img_url, "size": "full", "aspectMode": "cover", "aspectRatio": "1:1", "gravity": "top"}
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "box", "layout": "vertical", "paddingAll": "20px", "paddingTop": "10px",
+                                "contents": [
+                                    {"type": "text", "text": f"ยินดีที่ได้รู้จักคุณ {display_name}", "weight": "bold", "size": "md", "color": "#333333", "wrap": True},
+                                    {"type": "text", "text": "น้องหมอเม็ดยายินดีให้บริการครับ\nน้องหมอจะช่วยคุณให้กินยาให้ตรงเวลา จะได้ไม่โดนพี่หมอดุ", "size": "sm", "color": "#666666", "wrap": True, "margin": "lg"},
+                                    {"type": "text", "text": "อันดับแรก ปฏิบัติตามขั้นตอนนี้เพื่อใช้งานน้องหมอเม็ดยาเลย", "size": "sm", "color": "#333333", "wrap": True, "margin": "xl", "weight": "bold"},
+                                    {
+                                        "type": "box", "layout": "vertical", "margin": "md", "spacing": "sm",
+                                        "contents": [
+                                            {"type": "text", "text": "• 1. กรอกข้อมูลส่วนตัวทางการแพทย์", "size": "sm", "color": "#666666", "wrap": True},
+                                            {"type": "text", "text": "• 2. ถ่ายรูปยาที่ต้องทาน", "size": "sm", "color": "#666666", "wrap": True},
+                                            {"type": "text", "text": "• 3. ตรวจสอบข้อมูล", "size": "sm", "color": "#666666", "wrap": True},
+                                            {"type": "text", "text": "• 4. นอนสวยๆรอน้องหมอปลุกกินยาได้เลย", "size": "sm", "color": "#666666", "wrap": True}
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box", "layout": "vertical", "paddingAll": "20px",
+                        "contents": [
+                            {
+                                "type": "button", "style": "primary", "color": "#4CB0A0",
+                                "action": { "type": "uri", "label": "เพิ่มประวัติทางการแพทย์", "uri": f"{base_url}/profile?user_id={user_id}" }
+                            }
+                        ]
+                    }
+                }
+            )
+            line_bot_api.reply_message(event.reply_token, welcome_flex)
             continue
             
         if not isinstance(event, MessageEvent):
@@ -148,18 +509,11 @@ async def callback(request: Request):
                         "header": { "type": "box", "layout": "vertical", "backgroundColor": "#4CB0A0", "paddingAll": "15px", "contents": [ { "type": "text", "text": "เพิ่มยาใหม่", "weight": "bold", "color": "#FFFFFF", "size": "lg" } ] },
                         "body": { "type": "box", "layout": "vertical", "paddingAll": "20px", "contents": [ { "type": "text", "text": "กรุณาส่ง 'ภาพถ่าย' หน้าซองยาหรือใบสั่งแพทย์มาได้เลยค่ะ 📸", "size": "md", "color": "#333333", "wrap": True } ] },
                         "footer": { "type": "box", "layout": "vertical", "spacing": "sm", "paddingAll": "20px", "contents": [
-                            {"type": "button", "style": "primary", "color": "#4CB0A0", "action": {"type": "message", "label": "✍️ พิมพ์ข้อมูลยาเอง", "text": "เพิ่มยาด้วยการพิมพ์"}}
+                            {"type": "button", "style": "primary", "color": "#2ECC71", "action": {"type": "uri", "label": "✍️ พิมพ์ข้อมูลยาเอง", "uri": f"{str(request.base_url).rstrip('/')}/add-med?user_id={user_id}"}}
                         ]}
                     }
                 )
                 line_bot_api.reply_message(event.reply_token, flex_msg)
-            elif user_text == "เพิ่มยาด้วยการพิมพ์":
-                reply_text = "--- แบบฟอร์มเพิ่มยา ---\n💊 ชื่อยา: \n📝 วิธีใช้: \n📦 จำนวนทั้งหมด(เม็ด): \n⏰ เวลาเตือน(เช่น 08:00):"
-                reply_msg = "ก๊อปปี้ข้อความด้านล่างนี้ไปเติมคำในช่องว่าง แล้วส่งกลับมาเพื่อให้ระบบบันทึกได้เลยค่ะ 👇"
-                line_bot_api.reply_message(event.reply_token, [
-                    TextSendMessage(text=reply_msg),
-                    TextSendMessage(text=reply_text)
-                ])
             elif user_text.startswith("--- แบบฟอร์มเพิ่มยา ---"):
                 lines = user_text.split('\n')
                 med_name, dosage, total_pills, times_str = "ไม่ทราบชื่อ", "ไม่ระบุ", None, ""
@@ -272,6 +626,44 @@ async def callback(request: Request):
                     )
                     line_bot_api.reply_message(event.reply_token, flex_msg)
                 db.close()
+            elif user_text == "แก้ไขข้อมูล":
+                db = SessionLocal()
+                meds = db.query(Medication).filter(Medication.user_id == user_id, Medication.is_active == True).all()
+                db.close()
+                base_url = str(request.base_url).rstrip("/")
+                if not meds:
+                    line_bot_api.reply_message(event.reply_token, create_simple_flex("ยังไม่มียาในระบบที่จะแก้ไขค่ะ ❌", "ไม่มีข้อมูล", "#E74C3C"))
+                else:
+                    bubbles = []
+                    for m in meds:
+                        pills_text = f"เหลือ {m.pills_left} เม็ด" if m.pills_left is not None else "ไม่ระบุจำนวน"
+                        pill_color = "#E74C3C" if (m.pills_left is not None and m.pills_left < 5) else "#4CB0A0"
+                        bubbles.append({
+                            "type": "bubble",
+                            "header": {
+                                "type": "box", "layout": "vertical", "backgroundColor": "#4CB0A0", "paddingAll": "18px",
+                                "contents": [{"type": "text", "text": "💊 " + m.med_name, "weight": "bold", "size": "lg", "color": "#FFFFFF", "wrap": True}]
+                            },
+                            "body": {
+                                "type": "box", "layout": "vertical", "paddingAll": "18px", "spacing": "sm",
+                                "contents": [
+                                    {"type": "text", "text": f"วิธีใช้: {m.dosage or 'ไม่ระบุ'}", "size": "sm", "color": "#555", "wrap": True},
+                                    {"type": "text", "text": f"เวลา: {m.time_to_take or 'ไม่ระบุ'}", "size": "sm", "color": "#555", "wrap": True},
+                                    {"type": "text", "text": pills_text, "size": "sm", "color": pill_color, "weight": "bold"}
+                                ]
+                            },
+                            "footer": {
+                                "type": "box", "layout": "vertical", "spacing": "sm", "paddingAll": "18px",
+                                "contents": [
+                                    {"type": "button", "style": "primary", "color": "#F39C12", "height": "sm",
+                                     "action": {"type": "uri", "label": "✏️ แก้ไข", "uri": f"{base_url}/edit-med?med_id={m.id}&user_id={user_id}"}},
+                                    {"type": "button", "style": "secondary", "height": "sm",
+                                     "action": {"type": "uri", "label": "🗑️ ลบยานี้", "uri": f"{base_url}/delete-med?med_id={m.id}&user_id={user_id}"}}
+                                ]
+                            }
+                        })
+                    contents = bubbles[0] if len(bubbles) == 1 else {"type": "carousel", "contents": bubbles[:12]}
+                    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="จัดการข้อมูลยา", contents=contents))
             else:
                 line_bot_api.reply_message(event.reply_token, create_simple_flex("กรุณาเลือกเมนูที่ต้องการ หรือส่งภาพหน้าซองยาค่ะ", "ช่วยเหลือ", "#F39C12"))
                 

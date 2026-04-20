@@ -1,0 +1,122 @@
+INFO:     Will watch for changes in these directories: ['/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [2222] using StatReload
+Using CPU. Note: This module is much faster with a GPU.
+/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+INFO:     Started server process [2225]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     2a03:2880:16ff:5e:::0 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     147.92.150.195:0 - "POST /callback HTTP/1.1" 200 OK
+INFO:     147.92.149.170:0 - "POST /callback HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 107, in app
+    response = await f(request)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 426, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 314, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/main.py", line 666, in callback
+    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="จัดการข้อมูลยา", contents=contents))
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/deprecated/classic.py", line 199, in wrapper_function
+    return wrapped_(*args_, **kwargs_)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 123, in reply_message
+    self._post(
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 2116, in _post
+    self.__check_error(response)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 2152, in __check_error
+    raise LineBotApiError(
+linebot.exceptions.LineBotApiError: LineBotApiError: status_code=400, request_id=45f87f25-9dfd-4250-9636-cd9685a074a4, error_response={"details": [{"message": "invalid property", "property": "/contents/0/body/contents/0/color"}], "message": "A message (messages[0])\u00a0in the request body is invalid"}, headers={'Server': 'legy', 'Content-Type': 'application/json', 'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY', 'x-line-request-id': '45f87f25-9dfd-4250-9636-cd9685a074a4', 'x-xss-protection': '1; mode=block', 'Content-Length': '159', 'Expires': 'Mon, 20 Apr 2026 16:49:30 GMT', 'Cache-Control': 'max-age=0, no-cache, no-store', 'Pragma': 'no-cache', 'Date': 'Mon, 20 Apr 2026 16:49:30 GMT', 'Connection': 'close'}
+INFO:     147.92.149.170:0 - "POST /callback HTTP/1.1" 200 OK
+INFO:     147.92.149.170:0 - "POST /callback HTTP/1.1" 200 OK
+INFO:     2001:44c8:4287:b6fa:e982:3f5a:8055:e5c0:0 - "GET /static/doctor.png HTTP/1.1" 200 OK
+INFO:     147.92.149.170:0 - "POST /callback HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 107, in app
+    response = await f(request)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 426, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/fastapi/routing.py", line 314, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/main.py", line 666, in callback
+    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="จัดการข้อมูลยา", contents=contents))
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/deprecated/classic.py", line 199, in wrapper_function
+    return wrapped_(*args_, **kwargs_)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 123, in reply_message
+    self._post(
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 2116, in _post
+    self.__check_error(response)
+  File "/Users/warinthon/Thammasat /วิชาCS/CS271 AI/CS271-AI_MEDYA/venv/lib/python3.9/site-packages/linebot/api.py", line 2152, in __check_error
+    raise LineBotApiError(
+linebot.exceptions.LineBotApiError: LineBotApiError: status_code=400, request_id=720379af-46c7-42c1-89ae-b9fdb4e763b9, error_response={"details": [{"message": "invalid property", "property": "/contents/0/body/contents/0/color"}], "message": "A message (messages[0])\u00a0in the request body is invalid"}, headers={'Server': 'legy', 'Content-Type': 'application/json', 'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY', 'x-line-request-id': '720379af-46c7-42c1-89ae-b9fdb4e763b9', 'x-xss-protection': '1; mode=block', 'Content-Length': '159', 'Expires': 'Mon, 20 Apr 2026 16:49:49 GMT', 'Cache-Control': 'max-age=0, no-cache, no-store', 'Pragma': 'no-cache', 'Date': 'Mon, 20 Apr 2026 16:49:49 GMT', 'Connection': 'close'}

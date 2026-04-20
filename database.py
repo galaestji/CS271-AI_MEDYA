@@ -33,4 +33,17 @@ class MedicationLog(Base):
     status = Column(String) # "WAITING", "TAKEN", "MISSED"
     timestamp = Column(String, nullable=True) # เวลาที่รับประทานจริง (สำหรับเก็บประวัติ)
 
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, index=True, unique=True)
+    name = Column(String)
+    age = Column(Integer, nullable=True)
+    gender = Column(String, nullable=True)
+    weight = Column(String, nullable=True)
+    height = Column(String, nullable=True)
+    sickness = Column(String, nullable=True)
+    allergies = Column(String, nullable=True)
+
 Base.metadata.create_all(bind=engine)
